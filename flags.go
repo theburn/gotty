@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -25,6 +26,7 @@ func generateFlags(flags []flag, hint map[string]string) ([]cli.Flag, error) {
 	for i, flag := range flags {
 		fieldName := fieldName(flag.name, hint)
 
+		fmt.Println(fieldName)
 		field, ok := o.FieldOk(fieldName)
 		if !ok {
 			return nil, errors.New("No such field: " + fieldName)

@@ -59,6 +59,7 @@ type Options struct {
 	EnableBasicAuth     bool                   `hcl:"enable_basic_auth"`
 	Credential          string                 `hcl:"credential"`
 	EnableRandomUrl     bool                   `hcl:"enable_random_url"`
+	FixedUrl            string                 `hcl:"enable_fixed_url"`
 	RandomUrlLength     int                    `hcl:"random_url_length"`
 	IndexFile           string                 `hcl:"index_file"`
 	EnableTLS           bool                   `hcl:"enable_tls"`
@@ -89,6 +90,7 @@ var DefaultOptions = Options{
 	EnableBasicAuth:     false,
 	Credential:          "",
 	EnableRandomUrl:     false,
+	FixedUrl:            "/OneAPM/ServerWebConsole",
 	RandomUrlLength:     8,
 	IndexFile:           "",
 	EnableTLS:           false,
@@ -169,10 +171,13 @@ func (app *App) Run() error {
 	}
 
 	path := ""
-	if app.options.EnableRandomUrl {
-		path += "/" + generateRandomString(app.options.RandomUrlLength)
+	if len(app.options.FixedUrl) > 0 {
+		path += app.options.FixedUrl
+	} else {
+		if app.options.EnableRandomUrl {
+			path += "/" + generateRandomString(app.options.RandomUrlLength)
+		}
 	}
-
 	endpoint := net.JoinHostPort(app.options.Address, app.options.Port)
 
 	wsHandler := http.HandlerFunc(app.handleWS)
